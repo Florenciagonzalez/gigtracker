@@ -1,35 +1,33 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../services/supabase";
+
+
+
 
 function Home() {
 
-    const [concerts, setConcerts] = useState([]);
+    const [events, setEvents] = useState([]);
+
     useEffect(() => {
-        async function getConcerts() {
-            const { data, error } = await supabase
-                .from("concerts")
-                .select(`*, bands(name)`);
-
-            if (error) {
-                console.error(error);
-                return;
-            }
-            setConcerts(data);
-        }
-
-        getConcerts();
+        fetch("http://localhost:3000/events")
+        .then((res) => res.json())
+        .then((data) => setEvents(data))
+        .catch(console.error);
     }, []);
 
     return (
         <>
-            {concerts.map(concert => (
-                <div key={concert.id}>
-                    <h2>{concert.bands.name}</h2>
-                    <p>{concert.city}</p>
-                    <p>{concert.venue}</p>
-                    <p>{concert.date}</p>
-                </div>
-            ))}
+        <div>
+      {events.map((event) => (
+        <div key={event.buyUrl}>
+          <h2>{event.name}</h2>
+          <img src={event.image} alt={event.name} width={300} />
+          <p>{event.date}</p>
+          <p>{event.venue}</p>
+          <p>{event.price}</p>
+        </div>
+      ))}
+    </div>
+
         </>
     );
 }
